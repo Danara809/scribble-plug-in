@@ -1,0 +1,7 @@
+eclipse.preferences.version=1
+gmf_dashboard/domainGenerationModel=platform\:/resource/scribble/src-gen/org/scribble/Scribble.genmodel
+gmf_dashboard/domainModel=platform\:/resource/scribble/src-gen/org/scribble/Scribble.ecore
+gmf_dashboard/generationModel=platform\:/resource/scribble.gmf/model/Scribble.gmfgen
+gmf_dashboard/graphicalDefinitionModel=platform\:/resource/scribble.gmf/model/Scribble.gmfgraph
+gmf_dashboard/mappingModel=platform\:/resource/scribble.gmf/model/Scribble.gmfmap
+gmf_dashboard/toolingDefinitionModel=platform\:/resource/scribble.gmf/model/Scribble.gmftool

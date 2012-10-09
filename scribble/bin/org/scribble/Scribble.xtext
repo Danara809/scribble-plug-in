@@ -1,0 +1,129 @@
+grammar org.scribble.Scribble with org.eclipse.xtext.common.Terminals
+
+generate scribble "http://www.scribble.org/Scribble"
+
+
+ScribbleProgram:
+	(includeDecl+=IncludeDecl)*
+	(typeDecl+=TypeDecl)*
+	(globalProtocolDecl+=GlobalProtocolDecl)+
+	(instGlobalProtocolDecl+=InstGlobalProtocolDecl)*
+;
+
+IncludeDecl:
+	'include'
+	importURI=STRING
+	SEMI
+;
+
+
+InstGlobalProtocolDecl:
+	'global' 'protocol' 
+	 protocolName=ID 
+	 LPA 'role' roles+=ID (COMMA 'role' roles+=ID)* RPA
+	 'instantiates'
+	 instantiatedProtocol = ID
+	 SEMI 
+;
+
+
+TypeDecl:
+	"import"
+	typeName=ID
+	"from"
+	LT schema = ID GT
+	file=ID
+	("as" alias = ID)?
+	SEMI
+;
+
+GlobalProtocolDecl:
+	'global' 'protocol' 
+	protocolName=ID 
+	(LT 'sig' parameters+=ID (COMMA 'sig' parameters+=ID)* GT)?
+	LPA ('role' roles+=ID (COMMA 'role' roles+=ID)* )?RPA
+	body=GlobalInteractionBlock
+;
+
+GlobalInteractionBlock:
+	LCB (interactionsequence+=GlobalInteraction)+ RCB
+;
+
+GlobalInteraction:
+	Message | Choice | Parallel | Recursion | Continue | Interruptible | Do | Spawn
+;
+
+Spawn:
+	roleName=ID "spawns" targetProtocolName=ID
+	(LT 'sig' parameters+=ID (COMMA 'sig' parameters+=ID)* GT)?
+	LPA currentRoles+=ID "as" targetRoles+=ID (COMMA currentRoles += ID "as" targetRoles+=ID)* RPA SEMI
+;
+
+
+Do:
+	"do" targetProtocolName = ID 
+	(LT arguments+=MessageSignature  ( COMMA arguments+=MessageSignature )*GT)?
+	 LPA currentRoles+=ID "as" targetRoles+=ID (COMMA currentRoles += ID "as" targetRoles+=ID)* RPA SEMI
+;
+
+
+Interruptible:
+	"interruptible" 
+	body = GlobalInteractionBlock 
+	"by" 
+	roleNames+= ID 
+	"with" 
+	signatures+=MessageSignature 
+	(COMMA "by" roleNames+= ID "with" signatures+=MessageSignature)* 
+	//by role-name with message-signature  ( , by role-name with message-signature )* ;
+	SEMI
+;
+
+
+Continue:
+	"continue" loopName=ID SEMI
+;
+
+
+Recursion:
+	"rec" loopName = ID body = GlobalInteractionBlock
+;
+
+
+Parallel:
+	"parallel" branches+=GlobalInteractionBlock ("and" branches+=GlobalInteractionBlock)*
+;
+
+
+Choice:
+	"choice" "at" role = ID  branches+=GlobalInteractionBlock ("or" branches+=GlobalInteractionBlock)*	
+;
+
+
+Message:
+	signature = MessageSignature "from" sender = ID "to" receiver = ID SEMI
+;
+
+MessageSignature:
+	operator=ID LPA(payloadTypes+=PayloadType (COMMA payloadTypes+=PayloadType)* )?RPA
+;
+
+PayloadType:
+	(payload=ID (dataType=ID)? )
+;
+
+
+
+
+
+		
+// Terminals aka punctuation tokens in lex
+terminal LCB: '{';
+terminal RCB: '}';
+terminal LPA: '(';
+terminal RPA: ')';
+terminal SEMI: ';';
+terminal COLON: ':';
+terminal COMMA: ',';
+terminal GT: '>';
+terminal LT: '<';

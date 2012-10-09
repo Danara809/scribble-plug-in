@@ -1,0 +1,7 @@
+# Tracing options for the scribble.diagram plug-in
+
+# Common issues
+scribble.diagram/debug=false
+
+# Visual IDs
+scribble.diagram/debug/visualID=false
